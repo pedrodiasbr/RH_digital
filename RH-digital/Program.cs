@@ -100,6 +100,7 @@ namespace RH_digital
                 Console.WriteLine("Digite estado/provincia em que a pessoa foi registrada:");
                 estado = int.Parse(Console.ReadLine());
 
+                //bug aqui como resolver: criar forma de a pessoa ser de outro pais e cadastrar seu estado como int e nao string
                 Console.WriteLine("Digite o numero do registro da pessoa (equivalente ao CPF brasileiro):");
                 CPF = Console.ReadLine();
             }

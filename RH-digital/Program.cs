@@ -19,9 +19,9 @@ namespace RH_digital
 
                 if (escolha == "1")
                 {
-                    var empregado = CriarEmpregado();       
+                    var empregado = CriarEmpregado();
                 }
-                else if(escolha == "2")
+                else if (escolha == "2")
                 {
 
                 }
@@ -64,7 +64,7 @@ namespace RH_digital
                     Console.WriteLine("Opcao invalida. Aperte qualquer tecla para continuar.");
                     Console.ReadKey();
                 }
-            } while ( escolha != "0");
+            } while (escolha != "0");
         }
 
         private static Empregado CriarEmpregado(int ultimoNumeroPessoal)
@@ -73,29 +73,32 @@ namespace RH_digital
             string nome = Console.ReadLine();
 
             Console.WriteLine("Digite data de nascimento da pessoa:");
-            DateTime dataNascimento = Convert.ToDateTime( Console.ReadLine() );
+            DateTime dataNascimento = Convert.ToDateTime(Console.ReadLine());
 
             Console.WriteLine("Digite o sexo da pessoa:");
             Console.WriteLine("1 - Feminino");
             Console.WriteLine("2 - Masculino");
             Console.WriteLine("3 - Outro");
-            int sexo = int.Parse( Console.ReadLine() );
+            int sexo = int.Parse(Console.ReadLine());
 
-            int nacionalidade = -1;
             Console.WriteLine("Digite nacionalidade da pessoa:");
-            nacionalidade = int.Parse( Console.ReadLine() );
+            int Nac = int.Parse(Console.ReadLine());
+
+
+            Nacionalidade nacionalidade;
+            if (Nac == 1)
+            {
+                nacionalidade = Nacionalidade.brasileira;
+            }
+            else
+            {
+                nacionalidade = Nacionalidade.Outras;
+            }
 
             int estado = -1;
             string CPF;
-            if (nacionalidade == 30)
-            {
-                Console.WriteLine("Digite estado em que a pessoa foi registrada:");
-                estado = int.Parse( Console.ReadLine() );
-
-                Console.WriteLine("Digite o CPF da pessoa:");
-                CPF = Console.ReadLine();
-            }
-            else
+            
+            if (nacionalidade == Nacionalidade.brasileira)
             {
                 Console.WriteLine("Digite estado/provincia em que a pessoa foi registrada:");
                 estado = int.Parse(Console.ReadLine());
@@ -104,8 +107,16 @@ namespace RH_digital
                 Console.WriteLine("Digite o numero do registro da pessoa (equivalente ao CPF brasileiro):");
                 CPF = Console.ReadLine();
             }
-            
-            
+            else
+            {
+                Console.WriteLine("Digite estado em que a pessoa foi registrada:");
+                estado = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Digite o CPF da pessoa:");
+                CPF = Console.ReadLine();
+            }
+
+
             Console.WriteLine("Digite o salario da pessoa:");
             int salario = int.Parse ( Console.ReadLine() );
             
@@ -153,7 +164,7 @@ namespace RH_digital
     {
         public string Nome { set; get; }
         public DateTime DataNascimento { set; get; }
-        public int Nacionalidade { set; get; }
+        public Nacionalidade Nacionalidade { set; get; }
         public int Estado { set; get; }
         public string CPF { set; get; }
         public int Sexo { set; get; }
@@ -229,231 +240,8 @@ namespace RH_digital
     }
     public enum Nacionalidade 
     {
-        afegà = 1,
-        sul_Africana = 2,
-        albanesa = 3,
-        alemã = 4,
-        andorrana = 5,
-        angolana = 6,
-        anguilana = 7,
-        antiguana = 8,
-        antilhana = 9,
-        arabeSaudita = 10,
-        argelina = 11,
-        argentina = 12,
-        armenia = 13,
-        arubana = 14,
-        australiana = 15,
-        austriaca = 16,
-        azeri = 17,
-        baamiana = 18,
-        barenita = 19,
-        bangladechiana = 20,
-        barbadense = 21,
-        belga = 22,
-        belizenha = 23,
-        beninesea = 24,
-        bermudense = 25,
-        bielorrussa = 26,
-        boliviana = 27,
-        bosnia = 28,
-        botsuana = 29,
-        brasileira = 30,
-        bruneína = 31,
-        búlgara = 32,
-        burquina = 33,
-        burundiana = 34,
-        butanesa = 35,
-        caboVerdiana = 36,
-        camaronesa = 37,
-        cambojana = 38,
-        canadiana = 39,
-        catariana = 40,
-        cazaque = 41,
-        chadiana = 42,
-        tcheca = 43,
-        chilena = 44,
-        china = 45,
-        cipriota = 46,
-        colombiana = 47,
-        comoriana = 48,
-        norteCoreana = 49,
-        sulCoreana = 50,
-        marfinense = 51,
-        costarriquenha = 52,
-        croata = 53,
-        cubana = 54,
-        curaçauense = 55,
-        dinamarquesa = 56,
-        jibutiana = 57,
-        dominiqua = 58,
-        egípcia = 59,
-        salvadorenha = 60,
-        emiradense = 61,
-        equatoriana = 62,
-        eritreia = 63,
-        escocesa = 64,
-        eslovaca = 65,
-        eslovena = 66,
-        suazilandêa = 67,
-        micronésia = 68,
-        norteAmericana = 69,
-        estonia = 70,
-        etiope = 71,
-        fijiana = 72,
-        filipino = 73,
-        finlandesa = 74,
-        nepalesa = 75,
-        espanhola = 76,
-        turquense = 77,
-        francesa = 78,
-        gabonesa = 79,
-        gambiana = 80,
-        ganesa = 81,
-        georgiana = 82,
-        granadina = 83,
-        grega = 84,
-        guadalupense = 85,
-        guamesa = 86,
-        guatemalteca = 87,
-        guianesa = 88,
-        guianense = 89,
-        guineana = 90,
-        guineuEquatoriana = 91,
-        guineense = 92,
-        haitiana = 93,
-        hondurenha = 94,
-        honconguesa = 95,
-        húngara = 96,
-        iemenita = 97,
-        caimanesa = 98,
-        cookense = 99,
-        faroense = 100,
-        salomonense = 101,
-        virginenseAmericana = 102,
-        virginenseBritanica = 103,
-        indiana = 104,
-        indonésia = 105,
-        inglesa = 106,
-        iraniana = 107,
-        iraquiana = 108,
-        irlandesa = 109,
-        norteIrlandesa = 110,
-        islanda = 111,
-        israelense = 112,
-        Italiana = 113,
-        jamaicana = 114,
-        japona = 115,
-        jordana = 116,
-        quiribatiana = 117,
-        kosovar = 118,
-        kuwaitiana = 119,
-        laociana = 120,
-        lesotiana = 121,
-        letã = 122,
-        libanesa = 123,
-        liberiana = 124,
-        libia = 125,
-        listenstainiana = 126,
-        lituana = 127,
-        luxemburguesa = 128,
-        macaense = 129,
-        macedonica = 130,
-        malgaxe = 131,
-        malaia = 132,
-        malauiana = 133,
-        maldiva = 134,
-        maliano = 135,
-        maltesa = 136,
-        marroquina = 137,
-        martinicana = 138,
-        mauriciana = 139,
-        mauritana = 140,
-        mexicana = 141,
-        birmanesa = 142,
-        moçambicana = 143,
-        moldava = 144,
-        monegasca = 145,
-        mongol = 146,
-        montenegrina = 147,
-        monserratense = 148,
-        namibiana = 149,
-        nauruana = 150,
-        nicaraguense = 151,
-        nigerina = 152,
-        nigeriana = 153,
-        norueguesa = 154,
-        neocaledónia = 155,
-        neozelandesa = 156,
-        omanense = 157,
-        gala = 158,
-        neerlandesa = 159,
-        palauana = 160,
-        palestiniana = 161,
-        panamenha = 162,
-        papua = 163,
-        paquistanesa = 164,
-        paraguaia = 165,
-        peruana = 166,
-        polinesia = 167,
-        Polaca = 168,
-        portoRiquenha = 169,
-        portuguesa = 170,
-        queniana = 171,
-        quirguiz = 172,
-        britânica = 173,
-        centroAfricana = 174,
-        congolesaDem = 175,
-        congolesa = 176,
-        dominicana = 177,
-        romena = 178,
-        ruandesa = 179,
-        russa = 180,
-        samoana = 181,
-        samoense = 182,
-        saoMarinhense = 183,
-        santaLuciense = 184,
-        saoCristovense = 185,
-        saoMartinhenseFranca = 186,
-        saoMartinhensePaisesBaixos = 187,
-        saoTomense = 188,
-        saoVicentina = 189,
-        seichelense = 190,
-        senegalesa = 191,
-        serraLeonesa = 192,
-        servia = 193,
-        singapurense = 194,
-        siria = 195,
-        somali = 196,
-        cingalesa = 197,
-        sudanesa = 198,
-        sueca = 199,
-        suica = 200,
-        surinamesa = 201,
-        tailandês = 202,
-        taiwanesaTaipe = 203,
-        taiwanesa = 204,
-        tajique = 205,
-        tanzaniana = 206,
-        timorense = 207,
-        togolesa = 208,
-        tonganesa = 209,
-        trinitariaTobagense = 210,
-        tunisina = 211,
-        turquemena = 212,
-        turca = 213,
-        tuvaluana = 214,
-        ucraniana = 215,
-        ugandense = 216,
-        uruguaia = 217,
-        usbeque = 218,
-        vanuatuense = 219,
-        vaticana = 220,
-        venezuelana = 221,
-        vietnamita = 222,
-        zambiana = 223,
-        zimbabuana = 224,
-        apatrida = 0
+        brasileira = 1,
+        Outras = 2
     }
 
 }

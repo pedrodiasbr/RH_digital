@@ -19,11 +19,12 @@ namespace RH_digital
 
                 if (escolha == "1")
                 {
-                    var empregado = CriarEmpregado();
+                    var empregado = CriarEmpregado(1);
+                    db.AddEmpregadoNaLista(empregado);
                 }
                 else if (escolha == "2")
                 {
-
+                    db.AlterarSalario();
                 }
                 else if (escolha == "3")
                 {
@@ -59,9 +60,15 @@ namespace RH_digital
                     Console.WriteLine("Pressione qualquer tecla para finalizar");
                     Console.ReadKey();
                 }
+                else if (escolha == "10")
+                {
+                    //Opção apenas para testes
+                    db.MostrarEmpregados();
+                    Console.ReadKey();
+                }
                 else
                 {
-                    Console.WriteLine("Opcao invalida. Aperte qualquer tecla para continuar.");
+                    Console.WriteLine("Opção invalida. Aperte qualquer tecla para continuar.");
                     Console.ReadKey();
                 }
             } while (escolha != "0");
@@ -69,23 +76,45 @@ namespace RH_digital
 
         private static Empregado CriarEmpregado(int ultimoNumeroPessoal)
         {
-            Console.WriteLine("Digite nome da pessoa:");
+            Console.Clear();
+            Console.WriteLine("Digite o nome da pessoa:");
             string nome = Console.ReadLine();
-
             Console.WriteLine("Digite data de nascimento da pessoa:");
-            DateTime dataNascimento = Convert.ToDateTime(Console.ReadLine());
-
+            DateTime dataNascimento = new DateTime();
+            try
+            {
+                dataNascimento = Convert.ToDateTime(Console.ReadLine());
+            }catch(FormatException e)
+            {
+                Console.WriteLine("Data inválida, favor tentar novamente.");
+                Console.ReadKey();
+                Environment.Exit(1);
+            }
             Console.WriteLine("Digite o sexo da pessoa:");
             Console.WriteLine("1 - Feminino");
             Console.WriteLine("2 - Masculino");
             Console.WriteLine("3 - Outro");
             int sexo = int.Parse(Console.ReadLine());
+            while ((sexo > 3) || (sexo <= 0))
+            {
+                Console.Clear();
+                Console.WriteLine("Digite o sexo da pessoa:");
+                Console.WriteLine("1 - Feminino");
+                Console.WriteLine("2 - Masculino");
+                Console.WriteLine("3 - Outro");
+                sexo = int.Parse(Console.ReadLine());
+            }
 
-            Console.WriteLine("Digite nacionalidade da pessoa:");
+            Console.WriteLine("Digite nacionalidade da pessoa.\n 1 - Brasileira\n 2 - Outra");
             int Nac = int.Parse(Console.ReadLine());
+            while ((Nac > 2) || (Nac <= 0))
+            {
+                Console.WriteLine("Digite nacionalidade da pessoa.\n 1 - Brasileira\n 2 - Outra");
+                Nac = int.Parse(Console.ReadLine());
+            }
 
 
-            Nacionalidade nacionalidade;
+                Nacionalidade nacionalidade;
             if (Nac == 1)
             {
                 nacionalidade = Nacionalidade.brasileira;
@@ -97,7 +126,7 @@ namespace RH_digital
 
             int estado = -1;
             string CPF;
-            
+
             if (nacionalidade == Nacionalidade.brasileira)
             {
                 Console.WriteLine("Digite estado/provincia em que a pessoa foi registrada:");
@@ -117,9 +146,9 @@ namespace RH_digital
             }
 
 
-            Console.WriteLine("Digite o salario da pessoa:");
-            int salario = int.Parse ( Console.ReadLine() );
-            
+            Console.WriteLine("Digite o salário da pessoa:");
+            decimal salario = int.Parse(Console.ReadLine());
+
             Console.WriteLine("Digite o cargo da pessoa:");
             string cargo = Console.ReadLine();
 
@@ -142,7 +171,7 @@ namespace RH_digital
         {
             Console.Clear();
             string escolha = "-1";
-            Console.WriteLine("Escolha uma opcao:") ;
+            Console.WriteLine("Escolha uma opção:");
             Console.WriteLine("1 - Cadastrar Empregado");
             Console.WriteLine("2 - Alterar Salario");
             Console.WriteLine("3 - Desligar empregado");
@@ -159,7 +188,6 @@ namespace RH_digital
             return escolha;
         }
     }
-
     public class Empregado
     {
         public string Nome { set; get; }
@@ -172,10 +200,37 @@ namespace RH_digital
         public string Cargo { set; get; }
         public int Status { set; get; }
         public int NumeroPessoal { set; get; }
+
     }
 
     public class DBContext
     {
+        List<Empregado> ListaEmpregado = new List<Empregado>();
+        public void AddEmpregadoNaLista(Empregado empregado)
+        {
+            ListaEmpregado.Add(empregado);
+        }
+
+        //Mostrar Empregados é criado apenas para teste.
+        public void MostrarEmpregados()
+        {
+            for (int i = 0; i < ListaEmpregado.Count; i++)
+            {
+                Console.WriteLine("Empregados: " + ListaEmpregado[i].Nome);
+            }
+        }
+        public void AlterarSalario()
+        {
+            string ConfereCpf;
+            Console.WriteLine("Digite o CPF do empregado que deseja alterar o salário:");
+            ConfereCpf = Console.ReadLine();
+            var result = ListaEmpregado.FirstOrDefault(x => ConfereCpf == x.CPF);
+            Console.WriteLine("Digite o novo cargo do empregado " + result.Nome);
+            result.Cargo = Console.ReadLine();
+            Console.WriteLine("Digite o novo salário");
+            result.Salario = int.Parse(Console.ReadLine());
+        }
+
 
     }
 
@@ -238,7 +293,7 @@ namespace RH_digital
         Santa_Catarina = 26
         #endregion
     }
-    public enum Nacionalidade 
+    public enum Nacionalidade
     {
         brasileira = 1,
         Outras = 2

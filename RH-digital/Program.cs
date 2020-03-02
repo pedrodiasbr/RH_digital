@@ -21,6 +21,8 @@ namespace RH_digital
                 {
                     var empregado = CriarEmpregado(1);
                     db.AddEmpregadoNaLista(empregado);
+                    //impedir digitar cpf maior que 11 caracteres 
+                    //se digitar um cpf menor que 11 preencher com zeros a esquerda ate o length ser 11.
                 }
                 else if (escolha == "2")
                 {
@@ -65,6 +67,8 @@ namespace RH_digital
                     //Opção apenas para testes
                     db.MostrarEmpregados();
                     Console.ReadKey();
+
+                    ValidaCPF(Estado.Minas_Gerais, "11786525640");
                 }
                 else
                 {
@@ -84,9 +88,11 @@ namespace RH_digital
             try
             {
                 dataNascimento = Convert.ToDateTime(Console.ReadLine());
-            }catch(FormatException e)
+            }
+            catch (FormatException e)
             {
                 Console.WriteLine("Data inválida, favor tentar novamente.");
+                Console.WriteLine("Mensagem para equipe tecnica: " + e.Message);
                 Console.ReadKey();
                 Environment.Exit(1);
             }
@@ -167,6 +173,21 @@ namespace RH_digital
             };
         }
 
+        private static bool ValidaCPF(Estado estado, string CPF)
+        {
+            int[] posicao = new int [] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+            int soma = CPF.ToArray().Sum(x => int.Parse(x.ToString()) * posicao[Convert.ToInt32(x)]);
+
+
+                                 
+            if (true)
+            {
+
+            }
+            return false;
+        }
+
         static string Menu()
         {
             Console.Clear();
@@ -230,8 +251,6 @@ namespace RH_digital
             Console.WriteLine("Digite o novo salário");
             result.Salario = int.Parse(Console.ReadLine());
         }
-
-
     }
 
     public enum StatusEmpregado

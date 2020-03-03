@@ -30,31 +30,31 @@ namespace RH_digital
                 }
                 else if (escolha == "3")
                 {
-
+                    db.DesligarFuncionario();
                 }
                 else if (escolha == "4")
                 {
-
+                    db.FolhaPagamento();
                 }
                 else if (escolha == "5")
                 {
-
+                    db.SalarioSexo();
                 }
                 else if (escolha == "6")
                 {
-
+                    db.EmpregadoMaisVelho();
                 }
                 else if (escolha == "7")
                 {
-
+                    db.EmpregadoMaisNovo();
                 }
                 else if (escolha == "8")
                 {
-
+                    db.OrderByIdade();
                 }
                 else if (escolha == "9")
                 {
-
+                    db.OrderByNacionalidade();
                 }
                 else if (escolha == "0")
                 {
@@ -68,7 +68,7 @@ namespace RH_digital
                     db.MostrarEmpregados();
                     Console.ReadKey();
 
-                    ValidaCPF(Estado.Minas_Gerais, "11786525640");
+                    //ValidaCPF(Estado.Minas_Gerais, "11786525640");
                 }
                 else
                 {
@@ -100,16 +100,19 @@ namespace RH_digital
             Console.WriteLine("1 - Feminino");
             Console.WriteLine("2 - Masculino");
             Console.WriteLine("3 - Outro");
-            int sexo = int.Parse(Console.ReadLine());
-            while ((sexo > 3) || (sexo <= 0))
+            string sexo = Console.ReadLine();
+            while (sexo != "1" && sexo != "2" && sexo != "3")
             {
                 Console.Clear();
+                Console.WriteLine("Valor não econtrado, tente novamente. ");
                 Console.WriteLine("Digite o sexo da pessoa:");
                 Console.WriteLine("1 - Feminino");
                 Console.WriteLine("2 - Masculino");
                 Console.WriteLine("3 - Outro");
-                sexo = int.Parse(Console.ReadLine());
+                sexo = Console.ReadLine();
             }
+            Sexo Sexo = (Sexo)Enum.Parse(typeof(Sexo), sexo);
+            
 
             Console.WriteLine("Digite nacionalidade da pessoa.\n 1 - Brasileira\n 2 - Outra");
             int Nac = int.Parse(Console.ReadLine());
@@ -130,13 +133,13 @@ namespace RH_digital
                 nacionalidade = Nacionalidade.Outras;
             }
 
-            int estado = -1;
+            int Estado = -1;
             string CPF;
 
             if (nacionalidade == Nacionalidade.brasileira)
             {
                 Console.WriteLine("Digite estado/provincia em que a pessoa foi registrada:");
-                estado = int.Parse(Console.ReadLine());
+                Estado = int.Parse(Console.ReadLine());
 
                 //bug aqui como resolver: criar forma de a pessoa ser de outro pais e cadastrar seu estado como int e nao string
                 Console.WriteLine("Digite o numero do registro da pessoa (equivalente ao CPF brasileiro):");
@@ -145,7 +148,7 @@ namespace RH_digital
             else
             {
                 Console.WriteLine("Digite estado em que a pessoa foi registrada:");
-                estado = int.Parse(Console.ReadLine());
+                Estado = int.Parse(Console.ReadLine());
 
                 Console.WriteLine("Digite o CPF da pessoa:");
                 CPF = Console.ReadLine();
@@ -153,40 +156,44 @@ namespace RH_digital
 
 
             Console.WriteLine("Digite o salário da pessoa:");
-            decimal salario = int.Parse(Console.ReadLine());
+            double salario = int.Parse(Console.ReadLine());
 
             Console.WriteLine("Digite o cargo da pessoa:");
             string cargo = Console.ReadLine();
+
+            Console.WriteLine("Digite o status do empregado: \nAtivo = 1, \nAfastado = 2, \nAposentado = 3, \nDesligado = 4");
+            string Status = Console.ReadLine();
+            StatusEmpregado StatusEmpregado = (StatusEmpregado)Enum.Parse(typeof(StatusEmpregado),Status);
 
             return new Empregado()
             {
                 Nome = nome,
                 DataNascimento = dataNascimento,
                 Nacionalidade = nacionalidade,
-                Estado = estado,
+                Estado = Estado,
                 CPF = CPF,
-                Sexo = sexo,
+                Sexo = Sexo,
                 Salario = salario,
                 Cargo = cargo,
-                Status = 1,
+                Status = StatusEmpregado,
                 NumeroPessoal = ultimoNumeroPessoal + 1
             };
         }
 
-        private static bool ValidaCPF(Estado estado, string CPF)
-        {
-            int[] posicao = new int [] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        //private static bool ValidaCPF(Estado Estado, string CPF)
+        //{
+        //    int[] posicao = new int [] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-            int soma = CPF.ToArray().Sum(x => int.Parse(x.ToString()) * posicao[Convert.ToInt32(x)]);
+        //    int soma = CPF.ToArray().Sum(x => int.Parse(x.ToString()) * posicao[Convert.ToInt32(x)]);
 
 
                                  
-            if (true)
-            {
+        //    if (true)
+        //    {
 
-            }
-            return false;
-        }
+        //    }
+        //    return false;
+        //}
 
         static string Menu()
         {
@@ -216,10 +223,10 @@ namespace RH_digital
         public Nacionalidade Nacionalidade { set; get; }
         public int Estado { set; get; }
         public string CPF { set; get; }
-        public int Sexo { set; get; }
-        public decimal Salario { set; get; }
+        public Sexo Sexo { set; get; }
+        public double Salario { set; get; }
         public string Cargo { set; get; }
-        public int Status { set; get; }
+        public StatusEmpregado Status { set; get; }
         public int NumeroPessoal { set; get; }
 
     }
@@ -237,11 +244,13 @@ namespace RH_digital
         {
             for (int i = 0; i < ListaEmpregado.Count; i++)
             {
-                Console.WriteLine("Empregados: " + ListaEmpregado[i].Nome);
+                Console.WriteLine("Empregados: " + ListaEmpregado[i].Sexo);
             }
         }
         public void AlterarSalario()
         {
+            Console.Clear();
+            Console.WriteLine("-------Altera Salário-------");
             string ConfereCpf;
             Console.WriteLine("Digite o CPF do empregado que deseja alterar o salário:");
             ConfereCpf = Console.ReadLine();
@@ -251,9 +260,116 @@ namespace RH_digital
             Console.WriteLine("Digite o novo salário");
             result.Salario = int.Parse(Console.ReadLine());
         }
-    }
+        public void DesligarFuncionario()
+        {
+            Console.Clear();
+            Console.WriteLine("-------Desligando Funcionário-------");
+            string ConfereCpf;
+            Console.WriteLine("Digite o CPF do empregado que deseja desligar:");
+            ConfereCpf = Console.ReadLine();
+            var result = ListaEmpregado.FirstOrDefault(x => ConfereCpf == x.CPF);
+            Console.WriteLine("O funcionário " + result.Nome + " está agora desligado.");
+            StatusEmpregado StatusEmpregado = (StatusEmpregado)Enum.Parse(typeof(StatusEmpregado), "4");
+            result.Status = StatusEmpregado;
+            Console.ReadKey();
+        }
+        public void OrderByIdade()
+        {
+            Console.Clear();
+            Console.WriteLine("-------FUNCIONÁRIOS POR IDADE-------");
+            var result = ListaEmpregado.OrderBy(x => DateTime.Now.Year - x.DataNascimento.Year);
+            
+            foreach (var item in result)
+            {
+                Console.WriteLine("Nome do empregado: " + item.Nome + "; Idade: " + (DateTime.Now.Year - item.DataNascimento.Year));
 
-    public enum StatusEmpregado
+            }
+          
+
+            Console.ReadKey();
+        }
+        public void OrderByNacionalidade()
+        {
+            Console.Clear();
+            Console.WriteLine("-------FUNCIONÁRIOS POR NACIONALIDADE-------");
+            var result = ListaEmpregado.OrderBy(x => x.Nacionalidade);
+            foreach (var item in result)
+            {
+                Console.WriteLine("Nome do empregado: " + item.Nome +"; Nacionalidade: "+item.Nacionalidade );
+            }
+            Console.ReadKey();
+        }
+        public void FolhaPagamento()
+        {
+            Console.Clear();
+            Console.WriteLine("-------FOLHA DE PAGAMENTO-------");
+            var result = ListaEmpregado.OrderBy(x => x.Salario);
+            double Total = 0;
+            double TotalComImposto = 0;
+            foreach (var item in result)
+            {
+                double SalarioImposto = (0.55 * item.Salario + item.Salario);
+                Console.WriteLine( item.Nome + "; Salário sem imposto: " + item.Salario+ "; Salário com imposto: " + SalarioImposto);
+                Total += item.Salario;
+                TotalComImposto += SalarioImposto;
+            }
+            Console.WriteLine("Total com imposto " +Total);
+            Console.WriteLine("Total sem imposto " +TotalComImposto);
+
+            Console.ReadKey();
+        }
+        public void EmpregadoMaisVelho()
+        {
+            Console.Clear();
+            Console.WriteLine("-------EMPREGADO MAIS VELHO-------");
+            var result = ListaEmpregado.OrderBy(x => x.DataNascimento.Year).FirstOrDefault();
+            Console.WriteLine("O empregado mais velho é o(a) " + result.Nome + " com " + (DateTime.Now.Year - result.DataNascimento.Year) + " anos de idade.");
+            Console.ReadKey();
+        }
+        public void EmpregadoMaisNovo()
+        {
+            Console.Clear();
+            Console.WriteLine("-------EMPREGADO MAIS NOVO-------");
+            var result = ListaEmpregado.OrderByDescending(x => x.DataNascimento.Year).FirstOrDefault();
+            Console.WriteLine("O empregado mais novo é o(a) " +result.Nome +" com " + (DateTime.Now.Year - result.DataNascimento.Year)+ " anos de idade." );
+            Console.ReadKey();
+        }
+        public void SalarioSexo()
+        {
+            Console.Clear();
+            Console.WriteLine("-------SALÁRIO POR SEXO-------");          
+            double totFeminino = 0;
+            double totMasculino = 0;
+            double totOutro = 0;
+            Sexo Sexo = (Sexo)Enum.Parse(typeof(Sexo), "1");
+            var result = ListaEmpregado.Where(x => x.Sexo == Sexo);
+            foreach (var item in result)
+            {
+                totFeminino += item.Salario;
+            }
+            Sexo Sexo2 = (Sexo)Enum.Parse(typeof(Sexo), "2");
+            var result2 = ListaEmpregado.Where(x => x.Sexo == Sexo2);
+            foreach (var item2 in result2)
+            {
+                totMasculino += item2.Salario;
+            }
+            Sexo Sexo3 = (Sexo)Enum.Parse(typeof(Sexo), "3");
+            var result3 = ListaEmpregado.Where(x => x.Sexo == Sexo3);
+            foreach (var item3 in result3)
+            {
+                totOutro+= item3.Salario;
+            }
+            Console.WriteLine("O sexo Masculino da sua empresa recebe: "+totMasculino);
+            Console.WriteLine("O sexo Feminino da sua empresa recebe: " + totFeminino);
+            Console.WriteLine("O sexo 'outro' da sua empresa recebe: " + totOutro);
+            Console.ReadKey();
+
+        }
+    }
+    
+}
+
+public enum StatusEmpregado
     {
         Ativo = 1,
         Afastado = 2,
@@ -318,4 +434,3 @@ namespace RH_digital
         Outras = 2
     }
 
-}

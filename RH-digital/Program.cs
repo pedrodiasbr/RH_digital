@@ -13,7 +13,7 @@ namespace RH_digital
         {
             DBContext db = new DBContext();
             string escolha;
-
+            
             do
             {
                 escolha = Menu();
@@ -98,7 +98,7 @@ namespace RH_digital
                                    CultureInfo.InvariantCulture,
                                    DateTimeStyles.None,
                                    out dataNascimento);
-            while ((datavalida == false) || (dataNascimento > DateTime.Now))
+            while ((datavalida == false))
             {
                 Console.Clear();
                 Console.WriteLine("Data inválida, favor tentar novamente.");
@@ -153,26 +153,48 @@ namespace RH_digital
                 nacionalidade = Nacionalidade.Outras;
             }
 
-            int Estado = -1;
+            //int Estado = -1;
             string CPF;
 
-            if (nacionalidade == Nacionalidade.brasileira)
-            {
-                Console.WriteLine("Digite estado/provincia em que a pessoa foi registrada:");
-                Estado = int.Parse(Console.ReadLine());
+            //if (nacionalidade == Nacionalidade.brasileira)
+            //{
+            //    Console.WriteLine("Digite estado/provincia em que a pessoa foi registrada:");
+            //    Estado = int.Parse(Console.ReadLine());
 
-                //bug aqui como resolver: criar forma de a pessoa ser de outro pais e cadastrar seu estado como int e nao string
-                Console.WriteLine("Digite o numero do registro da pessoa (equivalente ao CPF brasileiro):");
-                CPF = Console.ReadLine();
-            }
-            else
-            {
-                Console.WriteLine("Digite estado em que a pessoa foi registrada:");
-                Estado = int.Parse(Console.ReadLine());
+            //    //bug aqui como resolver: criar forma de a pessoa ser de outro pais e cadastrar seu estado como int e nao string
+            //    Console.WriteLine("Digite o numero do registro da pessoa (equivalente ao CPF brasileiro):");
+            //    CPF = Console.ReadLine();
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Digite estado em que a pessoa foi registrada:");
+            //    Estado = int.Parse(Console.ReadLine());
 
                 Console.WriteLine("Digite o CPF da pessoa:");
                 CPF = Console.ReadLine();
+                CPF = CPF.Replace(".", "").Replace("-", "").Replace(" ", "");
+            ValidandoCpf(CPF);
+            while (ValidandoCpf(CPF) == false)
+            {
+                Console.Clear();
+                Console.WriteLine("Erro, CPF não existe. Favor tentar novamente");
+                Console.WriteLine("Digite o CPF da pessoa:");
+                CPF = Console.ReadLine();
+                CPF = CPF.Replace(".", "").Replace("-", "").Replace(" ", "");
+                ValidandoCpf(CPF);            
             }
+            DBContext.VerificaCpfRepetido(CPF);
+            while (DBContext.VerificaCpfRepetido(CPF) == true)
+            {
+                Console.Clear();
+                Console.WriteLine("Erro, CPF já cadastrado, Favor tentar novamente");
+                Console.WriteLine("Digite o CPF da pessoa:");
+                CPF = Console.ReadLine();
+                CPF = CPF.Replace(".", "").Replace("-", "").Replace(" ", "");
+                DBContext.VerificaCpfRepetido(CPF);
+            }
+
+
 
             double salario = 0;
 
@@ -219,7 +241,7 @@ namespace RH_digital
                 Nome = nome,
                 DataNascimento = dataNascimento,
                 Nacionalidade = nacionalidade,
-                Estado = Estado,
+                //Estado = Estado,
                 CPF = CPF,
                 Sexo = Sexo,
                 Salario = salario,
@@ -227,6 +249,53 @@ namespace RH_digital
                 Status = StatusEmpregado,
                 NumeroPessoal = ultimoNumeroPessoal + 1
             };
+        }
+
+        public static bool ValidandoCpf(string CPF)
+        {
+            int multiplicador1 = 10;
+            int multiplicador2 = 11;
+            string temCPF;
+            string Digito;
+            int Soma;
+            int Resto;
+            CPF = CPF.Trim();
+            CPF = CPF.Replace(".", "").Replace("-", "");
+            if (CPF.Length != 11)
+                return false;
+            temCPF = CPF.Substring(0, 9);
+            Soma = 0;
+            for (int i = 0; i < 9; i++)
+            {
+                Soma += int.Parse(temCPF[i].ToString()) * (multiplicador1 - i);
+            }
+            Resto = Soma % 11;
+            if (Resto < 2)
+            {
+                Resto = 0;
+            }
+            else
+            {
+                Resto = 11 - Resto;
+            }
+            Digito = Resto.ToString();
+            temCPF = temCPF + Digito;
+            Soma = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                Soma += int.Parse(temCPF[i].ToString()) * (multiplicador2 - i);
+            }
+            Resto = Soma % 11;
+            if (Resto < 2)
+            {
+                Resto = 0;
+            }
+            else
+            {
+                Resto = 11 - Resto;
+            }
+            Digito = Digito + Resto.ToString();
+            return CPF.EndsWith(Digito);
         }
 
         //private static bool ValidaCPF(Estado Estado, string CPF)
@@ -243,6 +312,7 @@ namespace RH_digital
         //    }
         //    return false;
         //}
+        
 
         static string Menu()
         {
@@ -282,7 +352,7 @@ namespace RH_digital
 
     public class DBContext
     {
-        List<Empregado> ListaEmpregado = new List<Empregado>();
+       public static List<Empregado> ListaEmpregado = new List<Empregado>();
         public void AddEmpregadoNaLista(Empregado empregado)
         {
             ListaEmpregado.Add(empregado);
@@ -293,7 +363,7 @@ namespace RH_digital
         {
             for (int i = 0; i < ListaEmpregado.Count; i++)
             {
-                Console.WriteLine("Empregados: " + ListaEmpregado[i].Salario);
+                Console.WriteLine("Empregados: "+ "Nome: "+ListaEmpregado[i].Nome+ "Salário: "+ ListaEmpregado[i].Salario + "CPF: " + ListaEmpregado[i].CPF);
             }
         }
         public void AlterarSalario()
@@ -302,6 +372,7 @@ namespace RH_digital
             Console.WriteLine("-------Altera Salário-------");
             string ConfereCpf = "";
             Console.WriteLine("Digite o CPF do empregado que deseja alterar o salário:");
+            Console.WriteLine("(Obs. Favor digitar o CPF sem '.','-' ou espaçamentos)");
             ConfereCpf = Console.ReadLine();
             try
             {
@@ -337,6 +408,7 @@ namespace RH_digital
             try
             {
                 Console.WriteLine("Digite o CPF do empregado que deseja desligar:");
+                Console.WriteLine("(Obs. Favor digitar o CPF sem '.','-' ou espaçamentos)");
                 ConfereCpf = Console.ReadLine();
                 var result = ListaEmpregado.FirstOrDefault(x => ConfereCpf == x.CPF);
                 Console.WriteLine("O funcionário " + result.Nome + " está agora desligado e seu salário foi zerado.");
@@ -457,8 +529,18 @@ namespace RH_digital
             Console.ReadKey();
 
         }
+        public static bool VerificaCpfRepetido(string _cpf)
+        {
+            foreach (var item in ListaEmpregado)
+            {
+                if (_cpf == item.CPF)
+                {
+                    return true;
+                }             
+            }
+            return false;
+        }
     }
-
 }
 
 public enum StatusEmpregado

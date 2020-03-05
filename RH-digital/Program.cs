@@ -63,14 +63,14 @@ namespace RH_digital
                     Console.WriteLine("Pressione qualquer tecla para finalizar");
                     Console.ReadKey();
                 }
-                else if (escolha == "10")
-                {
-                    //Opção apenas para testes
-                    db.MostrarEmpregados();
-                    Console.ReadKey();
+                //else if (escolha == "10")
+                //{
+                //    //Opção apenas para testes
+                //    db.MostrarEmpregados();
+                //    Console.ReadKey();
 
-                    //ValidaCPF(Estado.Minas_Gerais, "11786525640");
-                }
+                //    //ValidaCPF(Estado.Minas_Gerais, "11786525640");
+                //}
                 else
                 {
                     Console.WriteLine("Opção invalida. Aperte qualquer tecla para continuar.");

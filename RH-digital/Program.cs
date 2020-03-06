@@ -13,7 +13,7 @@ namespace RH_digital
         {
             DBContext db = new DBContext();
             string escolha;
-            
+
             do
             {
                 escolha = Menu();
@@ -84,11 +84,12 @@ namespace RH_digital
             Console.Clear();
             Console.WriteLine("Digite o nome da pessoa:");
             string nome = Console.ReadLine();
-            while(nome == "")
+            while (nome == "")
             {
                 Console.Clear();
                 Console.WriteLine("Nome não pode ser vazio");
                 Console.WriteLine("Digite o nome da pessoa:");
+                nome = Console.ReadLine();
             }
             Console.WriteLine("Digite data de nascimento da pessoa: ('dd/MM/yyyy')");
             DateTime dataNascimento;
@@ -141,8 +142,6 @@ namespace RH_digital
                 Nac = Console.ReadLine();
             }
 
-
-
             Nacionalidade nacionalidade;
             if (Nac == "1")
             {
@@ -170,9 +169,9 @@ namespace RH_digital
             //    Console.WriteLine("Digite estado em que a pessoa foi registrada:");
             //    Estado = int.Parse(Console.ReadLine());
 
-                Console.WriteLine("Digite o CPF da pessoa:");
-                CPF = Console.ReadLine();
-                CPF = CPF.Replace(".", "").Replace("-", "").Replace(" ", "");
+            Console.WriteLine("Digite o CPF da pessoa:");
+            CPF = Console.ReadLine();
+            CPF = CPF.Replace(".", "").Replace("-", "").Replace(" ", "");
             ValidandoCpf(CPF);
             while (ValidandoCpf(CPF) == false)
             {
@@ -181,7 +180,7 @@ namespace RH_digital
                 Console.WriteLine("Digite o CPF da pessoa:");
                 CPF = Console.ReadLine();
                 CPF = CPF.Replace(".", "").Replace("-", "").Replace(" ", "");
-                ValidandoCpf(CPF);            
+                ValidandoCpf(CPF);
             }
             DBContext.VerificaCpfRepetido(CPF);
             while (DBContext.VerificaCpfRepetido(CPF) == true)
@@ -194,23 +193,28 @@ namespace RH_digital
                 DBContext.VerificaCpfRepetido(CPF);
             }
 
-
-
             double salario = 0;
 
             try
             {
                 Console.WriteLine("Digite o salário da pessoa:");
                 salario = double.Parse(Console.ReadLine());
+                while (salario < 0)
+                {
+                    Console.ReadKey();
+                    Console.WriteLine("Salário não pode ser negativo. Tente novamente.");
+                    Console.WriteLine("Digite o salário da pessoa:");
+                    salario = double.Parse(Console.ReadLine());
+                }
             }
-            catch
+            catch (Exception)
             {
                 Console.WriteLine("Valor não existente.\n O salário será definido como 0 (zero) e ao retornar ao menu, você pode alterar escolhendo a opção 2 ('dois')");
             }
 
             Console.WriteLine("Digite o cargo da pessoa:");
             string cargo = Console.ReadLine();
-            while(cargo == "")
+            while (cargo == "")
             {
                 Console.Clear();
                 Console.WriteLine("Cargo não pode ser vazio");
@@ -312,12 +316,12 @@ namespace RH_digital
         //    }
         //    return false;
         //}
-        
+
 
         static string Menu()
         {
             Console.Clear();
-            string escolha = "-1";
+            string Escolha = "-1";
             Console.WriteLine("Escolha uma opção:");
             Console.WriteLine("1 - Cadastrar Empregado");
             Console.WriteLine("2 - Alterar Salario");
@@ -330,9 +334,9 @@ namespace RH_digital
             Console.WriteLine("9 - Ver Empregado por nacionalidade");
             Console.WriteLine("");
             Console.WriteLine("0 - Sair do programa");
-            escolha = Console.ReadLine();
+            Escolha = Console.ReadLine();
 
-            return escolha;
+            return Escolha;
         }
     }
     public class Empregado
@@ -352,7 +356,7 @@ namespace RH_digital
 
     public class DBContext
     {
-       public static List<Empregado> ListaEmpregado = new List<Empregado>();
+        public static List<Empregado> ListaEmpregado = new List<Empregado>();
         public void AddEmpregadoNaLista(Empregado empregado)
         {
             ListaEmpregado.Add(empregado);
@@ -363,7 +367,7 @@ namespace RH_digital
         {
             for (int i = 0; i < ListaEmpregado.Count; i++)
             {
-                Console.WriteLine("Empregados: "+ "Nome: "+ListaEmpregado[i].Nome+ "Salário: "+ ListaEmpregado[i].Salario + "CPF: " + ListaEmpregado[i].CPF);
+                Console.WriteLine("Empregados: " + "Nome: " + ListaEmpregado[i].Nome + "Salário: " + ListaEmpregado[i].Salario + "CPF: " + ListaEmpregado[i].CPF);
             }
         }
         public void AlterarSalario()
@@ -384,7 +388,7 @@ namespace RH_digital
                 else
                 {
                     Console.WriteLine("Digite o novo cargo do empregado " + result.Nome);
-                    result.Cargo = Console.ReadLine(); 
+                    result.Cargo = Console.ReadLine();
                     Console.WriteLine("Digite o novo salário");
                     result.Salario = double.Parse(Console.ReadLine());
                 }
@@ -476,26 +480,40 @@ namespace RH_digital
         {
             Console.Clear();
             Console.WriteLine("-------EMPREGADO MAIS VELHO-------");
-            var result = ListaEmpregado.OrderBy(x => x.DataNascimento.Year).FirstOrDefault();
-            var idade = DateTime.Now.Year - result.DataNascimento.Year;
-            if (result.DataNascimento.Month > DateTime.Now.Month && result.DataNascimento.Day > DateTime.Now.Day)
+            try
             {
-                idade--;
+                var result = ListaEmpregado.OrderBy(x => x.DataNascimento.Year).FirstOrDefault();
+                var idade = DateTime.Now.Year - result.DataNascimento.Year;
+                if (result.DataNascimento.Month > DateTime.Now.Month && result.DataNascimento.Day > DateTime.Now.Day)
+                {
+                    idade--;
+                }
+                Console.WriteLine("O empregado mais velho é o(a) " + result.Nome + " com " + (idade) + " anos de idade.");
             }
-            Console.WriteLine("O empregado mais velho é o(a) " + result.Nome + " com " + (idade) + " anos de idade.");
+            catch (NullReferenceException)
+            {
+                Console.WriteLine("Não foi possível encontrar resultados pois não existe empregados cadastrados ainda.");
+            }
             Console.ReadKey();
         }
         public void EmpregadoMaisNovo()
         {
             Console.Clear();
             Console.WriteLine("-------EMPREGADO MAIS NOVO-------");
-            var result = ListaEmpregado.OrderByDescending(x => x.DataNascimento.Year).FirstOrDefault();
-            var idade = DateTime.Now.Year - result.DataNascimento.Year;
-            if (result.DataNascimento.Month > DateTime.Now.Month && result.DataNascimento.Day > DateTime.Now.Day)
+            try
             {
-                idade--;
+                var result = ListaEmpregado.OrderByDescending(x => x.DataNascimento.Year).FirstOrDefault();
+                var idade = DateTime.Now.Year - result.DataNascimento.Year;
+                if (result.DataNascimento.Month > DateTime.Now.Month && result.DataNascimento.Day > DateTime.Now.Day)
+                {
+                    idade--;
+                }
+                Console.WriteLine("O empregado mais novo é o(a) " + result.Nome + " com " + (idade) + " anos de idade.");
             }
-            Console.WriteLine("O empregado mais novo é o(a) " + result.Nome + " com " + (idade) + " anos de idade.");
+            catch (NullReferenceException)
+            {
+                Console.WriteLine("Não foi possível encontrar resultados pois não existe empregados cadastrados ainda.");
+            }
             Console.ReadKey();
         }
         public void SalarioSexo()
@@ -536,7 +554,7 @@ namespace RH_digital
                 if (_cpf == item.CPF)
                 {
                     return true;
-                }             
+                }
             }
             return false;
         }

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RH_digital
 {
@@ -22,8 +20,6 @@ namespace RH_digital
                 {
                     var empregado = CriarEmpregado(1);
                     db.AddEmpregadoNaLista(empregado);
-                    //impedir digitar cpf maior que 11 caracteres 
-                    //se digitar um cpf menor que 11 preencher com zeros a esquerda ate o length ser 11.
                 }
                 else if (escolha == "2")
                 {
@@ -63,14 +59,6 @@ namespace RH_digital
                     Console.WriteLine("Pressione qualquer tecla para finalizar");
                     Console.ReadKey();
                 }
-                //else if (escolha == "10")
-                //{
-                //    //Opção apenas para testes
-                //    db.MostrarEmpregados();
-                //    Console.ReadKey();
-
-                //    //ValidaCPF(Estado.Minas_Gerais, "11786525640");
-                //}
                 else
                 {
                     Console.WriteLine("Opção invalida. Aperte qualquer tecla para continuar.");
@@ -91,6 +79,7 @@ namespace RH_digital
                 Console.WriteLine("Digite o nome da pessoa:");
                 nome = Console.ReadLine();
             }
+
             Console.WriteLine("Digite data de nascimento da pessoa: ('dd/MM/yyyy')");
             DateTime dataNascimento;
             var datavalida = DateTime
@@ -99,6 +88,7 @@ namespace RH_digital
                                    CultureInfo.InvariantCulture,
                                    DateTimeStyles.None,
                                    out dataNascimento);
+
             while ((datavalida == false))
             {
                 Console.Clear();
@@ -130,7 +120,7 @@ namespace RH_digital
             }
             Sexo Sexo = (Sexo)Enum.Parse(typeof(Sexo), sexo);
 
-            string Nac = "";
+            string Nac;
             Console.WriteLine("Digite nacionalidade da pessoa.\n 1 - Brasileira\n 2 - Outra");
 
             Nac = Console.ReadLine();
@@ -145,30 +135,14 @@ namespace RH_digital
             Nacionalidade nacionalidade;
             if (Nac == "1")
             {
-                nacionalidade = Nacionalidade.brasileira;
+                nacionalidade = Nacionalidade.Brasileira;
             }
             else
             {
                 nacionalidade = Nacionalidade.Outras;
             }
 
-            //int Estado = -1;
             string CPF;
-
-            //if (nacionalidade == Nacionalidade.brasileira)
-            //{
-            //    Console.WriteLine("Digite estado/provincia em que a pessoa foi registrada:");
-            //    Estado = int.Parse(Console.ReadLine());
-
-            //    //bug aqui como resolver: criar forma de a pessoa ser de outro pais e cadastrar seu estado como int e nao string
-            //    Console.WriteLine("Digite o numero do registro da pessoa (equivalente ao CPF brasileiro):");
-            //    CPF = Console.ReadLine();
-            //}
-            //else
-            //{
-            //    Console.WriteLine("Digite estado em que a pessoa foi registrada:");
-            //    Estado = int.Parse(Console.ReadLine());
-
             Console.WriteLine("Digite o CPF da pessoa:");
             CPF = Console.ReadLine();
             CPF = CPF.Replace(".", "").Replace("-", "").Replace(" ", "");
@@ -194,7 +168,6 @@ namespace RH_digital
             }
 
             double salario = 0;
-
             try
             {
                 Console.WriteLine("Digite o salário da pessoa:");
@@ -234,18 +207,16 @@ namespace RH_digital
             StatusEmpregado StatusEmpregado = (StatusEmpregado)Enum.Parse(typeof(StatusEmpregado), Status);
             if (StatusEmpregado == StatusEmpregado.Desligado)
             {
-                Console.WriteLine("O salário foi automáticamente zerado pois o usuário se encontra desligado.");
+                Console.WriteLine("O salário foi automaticamente zerado pois o usuário se encontra desligado.");
                 salario = 0;
                 Console.ReadKey();
             }
-
 
             return new Empregado()
             {
                 Nome = nome,
                 DataNascimento = dataNascimento,
                 Nacionalidade = nacionalidade,
-                //Estado = Estado,
                 CPF = CPF,
                 Sexo = Sexo,
                 Salario = salario,
@@ -302,26 +273,10 @@ namespace RH_digital
             return CPF.EndsWith(Digito);
         }
 
-        //private static bool ValidaCPF(Estado Estado, string CPF)
-        //{
-        //    int[] posicao = new int [] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-
-        //    int soma = CPF.ToArray().Sum(x => int.Parse(x.ToString()) * posicao[Convert.ToInt32(x)]);
-
-
-
-        //    if (true)
-        //    {
-
-        //    }
-        //    return false;
-        //}
-
-
         static string Menu()
         {
             Console.Clear();
-            string Escolha = "-1";
+            string Escolha;
             Console.WriteLine("Escolha uma opção:");
             Console.WriteLine("1 - Cadastrar Empregado");
             Console.WriteLine("2 - Alterar Salario");
@@ -351,7 +306,6 @@ namespace RH_digital
         public string Cargo { set; get; }
         public StatusEmpregado Status { set; get; }
         public int NumeroPessoal { set; get; }
-
     }
 
     public class DBContext
@@ -362,14 +316,6 @@ namespace RH_digital
             ListaEmpregado.Add(empregado);
         }
 
-        //Mostrar Empregados é criado apenas para teste.
-        public void MostrarEmpregados()
-        {
-            for (int i = 0; i < ListaEmpregado.Count; i++)
-            {
-                Console.WriteLine("Empregados: " + "Nome: " + ListaEmpregado[i].Nome + "Salário: " + ListaEmpregado[i].Salario + "CPF: " + ListaEmpregado[i].CPF);
-            }
-        }
         public void AlterarSalario()
         {
             Console.Clear();
@@ -404,6 +350,7 @@ namespace RH_digital
                 Console.ReadKey();
             }
         }
+
         public void DesligarFuncionario()
         {
             Console.Clear();
@@ -441,11 +388,11 @@ namespace RH_digital
                     idade--;
                 }
                 Console.WriteLine("Nome do empregado: " + item.Nome + "; Idade: " + (idade));
-
             }
 
             Console.ReadKey();
         }
+
         public void OrderByNacionalidade()
         {
             Console.Clear();
@@ -471,11 +418,11 @@ namespace RH_digital
                 Total += item.Salario;
                 TotalComImposto += SalarioImposto;
             }
-            Console.WriteLine("Total com imposto " + Total);
-            Console.WriteLine("Total sem imposto " + TotalComImposto);
-
+            Console.WriteLine("Total sem imposto " + Total);
+            Console.WriteLine("Total com imposto " + TotalComImposto);
             Console.ReadKey();
         }
+
         public void EmpregadoMaisVelho()
         {
             Console.Clear();
@@ -496,6 +443,7 @@ namespace RH_digital
             }
             Console.ReadKey();
         }
+
         public void EmpregadoMaisNovo()
         {
             Console.Clear();
@@ -516,45 +464,35 @@ namespace RH_digital
             }
             Console.ReadKey();
         }
+
         public void SalarioSexo()
         {
             Console.Clear();
             Console.WriteLine("-------SALÁRIO POR SEXO-------");
+            
             double totFeminino = 0;
-            double totMasculino = 0;
-            double totOutro = 0;
             Sexo Sexo = (Sexo)Enum.Parse(typeof(Sexo), "1");
-            var result = ListaEmpregado.Where(x => x.Sexo == Sexo);
-            foreach (var item in result)
-            {
-                totFeminino += item.Salario;
-            }
+            totFeminino = ListaEmpregado.Where(x => x.Sexo == Sexo).Sum(x => x.Salario);
+
+            double totMasculino = 0;
             Sexo Sexo2 = (Sexo)Enum.Parse(typeof(Sexo), "2");
-            var result2 = ListaEmpregado.Where(x => x.Sexo == Sexo2);
-            foreach (var item2 in result2)
-            {
-                totMasculino += item2.Salario;
-            }
+            totMasculino = ListaEmpregado.Where(x => x.Sexo == Sexo2).Sum(x => x.Salario);
+
+            double totOutro = 0;
             Sexo Sexo3 = (Sexo)Enum.Parse(typeof(Sexo), "3");
-            var result3 = ListaEmpregado.Where(x => x.Sexo == Sexo3);
-            foreach (var item3 in result3)
-            {
-                totOutro += item3.Salario;
-            }
+            totOutro = ListaEmpregado.Where(x => x.Sexo == Sexo3).Sum(x => x.Salario);
+
             Console.WriteLine("O sexo Masculino da sua empresa recebe: " + totMasculino);
             Console.WriteLine("O sexo Feminino da sua empresa recebe: " + totFeminino);
             Console.WriteLine("O sexo 'outro' da sua empresa recebe: " + totOutro);
             Console.ReadKey();
-
         }
+
         public static bool VerificaCpfRepetido(string _cpf)
         {
-            foreach (var item in ListaEmpregado)
+            if (ListaEmpregado.Any(x => x.CPF == _cpf))
             {
-                if (_cpf == item.CPF)
-                {
-                    return true;
-                }
+                return true;
             }
             return false;
         }
@@ -576,53 +514,8 @@ public enum Sexo
     Outros = 3
 }
 
-public enum Estado
-{
-    #region Centro Oeste
-    Goiás = 1,
-    Mato_Grosso = 2,
-    Mato_Grosso_do_Sul = 3,
-    Distrito_Federal = 27,
-    #endregion
-
-    #region Nordeste
-    Bahia = 4,
-    Piauí = 5,
-    Paraíba = 6,
-    Maranhão = 7,
-    Pernambuco = 8,
-    Ceará = 9,
-    Rio_Grande_do_Norte = 10,
-    Alagoas = 11,
-    Sergipe = 12,
-    #endregion
-
-    #region Norte
-    Pará = 13,
-    Tocantins = 14,
-    Amazonas = 15,
-    Rondônia = 16,
-    Acre = 17,
-    Amapá = 18,
-    Roraima = 19,
-    #endregion
-
-    #region Sudeste
-    Minas_Gerais = 20,
-    São_Paulo = 21,
-    Rio_de_Janeiro = 22,
-    Espírito_Santo = 23,
-    #endregion
-
-    #region Sul
-    Rio_Grande_do_Sul = 24,
-    Paraná = 25,
-    Santa_Catarina = 26
-    #endregion
-}
 public enum Nacionalidade
 {
-    brasileira = 1,
+    Brasileira = 1,
     Outras = 2
 }
-
